@@ -83,6 +83,7 @@ class Usuarios(Base):
     login = Column(String(20),unique=True)
     senha = Column(String(20))
     criadoem = Column(DateTime,default = datetime.datetime.utcnow,nullable=False)
+    alteradoem = Column(DateTime,onupdate = datetime.datetime.utcnow,default = datetime.datetime.utcnow,nullable=False)
     ativo =  Column(Boolean, default=True,nullable=False)
 
     def __repr__(self) -> str:

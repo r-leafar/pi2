@@ -38,7 +38,7 @@ def consulta_todos_usuarios():
 
 if __name__ == "__main__":
     insere_cliente("RAFAEL SABOIA SILVA")
-    insere_usuario("rafaelsaboia","ubatuba")
+    insere_usuario("rafaelsaboia","pbkdf2:sha256:260000$dKGUN77BhkjwSoiz$e21a94efb49544cc4177c2581d3e4ff9f5809ef19177ad94b62d25cdf9f8e526")
     insere_ordem(1,"teste","teste",1)
     #exclui_cliente(1)
     #consulta()

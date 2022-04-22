@@ -3,6 +3,7 @@ from urllib import response
 from flask import Flask, request
 from flask_restful import Resource,Api
 from models import Usuarios,Cliente,timedelta
+from werkzeug.security import generate_password_hash
 #from flask_httpauth import HTTPBasicAuth
 
 #auth = HTTPBasicAuth()
@@ -81,9 +82,8 @@ class ClienteResource(Resource):
         }
 class ListarClienteResource(Resource):
     def get(self):
-        cli = Cliente.query.all()
-        response = [ {"idcliente":i.idcliente,"nome":i.nome,"bairro":i.bairro,"logradouro":i.logradouro,"cidade":i.cidade,"numero":i.numero,"email":i.email,"criadoem":(i.criadoem- timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"),"alteradoem":(i.alteradoem - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")} for i in cli]
-        return response,200
+        cli = Cliente.query.filter_by(idcliente=idcliente).first()
+        return 
     def post(self):
         dados = request.json
         #cli = Cliente(nome=dados["nome"],bairro=dados["bairro"],
@@ -98,19 +98,32 @@ class ListarClienteResource(Resource):
                 "numero":cli.numero,
                 "email":cli.email           
             }
-class ListarAtividades(Resource):
-    def get(self):
-        atividades = Atividades.query.all()
-        response = [{"id":i.id,"nome":i.nome,"pessoa":i.pessoa.nome} for i in atividades]
-        return response
-    def post(self):
+class UsuarioResource(Resource):
+    def get(self,idusuario):
+        usuario = Usuarios.query.filter_by(idusuario=idusuario).first()
+        return {
+            "idusuario":usuario.idusuario,
+            "login":usuario.login,
+            "senha": usuario.senha,
+            "criadoem":(usuario.criadoem- timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"),
+            "alteradoem":(usuario.alteradoem - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")
+        }
+    def put(self,idusuario):
         dados = request.json
-        pessoa = Pessoas.query.filter_by(nome=dados["pessoa"]).first()
-        atividade = Atividades(nome=dados["nome"],pessoa=pessoa)
-        atividade.save()
-
+        usuario = Usuarios(**dados)
+        usuario.senha = generate_password_hash(dados["senha"])
+        usuario.save()
+        
+class ListarUsuarioResource(Resource):
+    def get(self):
+        pass
+        '''
+        response = [ {"idcliente":i.idcliente,"nome":i.nome,"bairro":i.bairro,"logradouro":i.logradouro,"cidade":i.cidade,"numero":i.numero,"email":i.email,"criadoem":(i.criadoem- timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"),"alteradoem":(i.alteradoem - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")} for i in cli]
+        return response'''
+        
 api.add_resource(ClienteResource,"/cliente/<int:idcliente>")
 api.add_resource(ListarClienteResource,"/cliente/")
+api.add_resource(UsuarioResource,"/usuario/<int:idusuario>")
 
 
 if __name__ == "__main__":
