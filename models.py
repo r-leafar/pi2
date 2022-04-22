@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import datetime
 
 
-engine = create_engine("sqlite:///pi2.db",encoding="utf8")
+engine = create_engine("sqlite:///instance/pi2.db",encoding="utf8")
 db_session = scoped_session(sessionmaker(autocommit=False,bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
