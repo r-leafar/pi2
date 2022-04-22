@@ -3,8 +3,8 @@ from models import Cliente, Usuarios, OrdemServico
 def insere():
     #pessoa = Pessoas(nome="Thiago",idade=30)
     #pessoa.save()
-   # programador = Programador(nome="RAFAEL")
-   # programador.save()
+    #programador = Programador(nome="RAFAEL")
+    #programador.save()
     #habilidade = Habilidade(nome="Back End")
     #habilidade.save()
 
@@ -37,8 +37,8 @@ def consulta_todos_usuarios():
     print(usuarios)
 
 if __name__ == "__main__":
-    #insere_cliente("RAFAEL SABOIA SILVA")
-    #insere_usuario("rafaelsaboia","ubatuba")
-    #insere_ordem(1,"teste","teste",1)
+    insere_cliente("RAFAEL SABOIA SILVA")
+    insere_usuario("rafaelsaboia","ubatuba")
+    insere_ordem(1,"teste","teste",1)
     #exclui_cliente(1)
     #consulta()

@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine,Column,Integer,String,DateTime,Boolean,ForeignKey,PrimaryKeyConstraint
 from sqlalchemy.orm import scoped_session,sessionmaker,relationship
 from sqlalchemy.ext.declarative import declarative_base
+from datetime import timedelta
 import datetime
 
 
@@ -43,6 +44,7 @@ class Cliente(Base):
     numero = Column  (String(80))
     email = Column  (String(80))
     criadoem = Column(DateTime,default = datetime.datetime.utcnow,nullable=False)
+    alteradoem = Column(DateTime,onupdate = datetime.datetime.utcnow,default = datetime.datetime.utcnow,nullable=False)
     ativo =  Column(Boolean, default=True,nullable=False)
 
     def __repr__(self):

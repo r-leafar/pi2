@@ -2,10 +2,10 @@ from cProfile import run
 from urllib import response
 from flask import Flask, request
 from flask_restful import Resource,Api
-from models import Pessoas,Atividades,Usuarios
-from flask_httpauth import HTTPBasicAuth
+from models import Usuarios,Cliente,timedelta
+#from flask_httpauth import HTTPBasicAuth
 
-auth = HTTPBasicAuth()
+#auth = HTTPBasicAuth()
 app = Flask(__name__)
 api = Api(app)
 
@@ -14,26 +14,27 @@ api = Api(app)
 #     "silvio":"321"
 
 # }
-@auth.verify_password
+#@auth.verify_password
 def verificacao(login,senha):
     if not (login,senha):
         return False
     return Usuarios.query.filter_by(login=login,senha=senha).first()
 
-class Cliente(Resource):
-    @auth.login_required
+class ClienteResource(Resource):
+    # @auth.login_required
     def get(self,idcliente):
         cli = Cliente.query.filter_by(idcliente=idcliente).first()
         try:
             response ={
-                "idcliente":cli.id,
+                "idcliente":cli.idcliente,
                 "nome":cli.nome,
                 "bairro":cli.bairro,
                 "logradouro": cli.logradouro,
                 "cidade":cli.cidade,
                 "numero":cli.numero,
                 "email":cli.email,
-                "criadoem":cli.criadoem
+                "criadoem":(cli.criadoem- timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"),
+                "alteradoem":(cli.alteradoem - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")
                 
             }
         except AttributeError:
@@ -61,7 +62,7 @@ class Cliente(Resource):
             
         cli.save()
         response ={
-                "idcliente":cli.id,
+                "idcliente":cli.idcliente,
                 "nome":cli.nome,
                 "bairro":cli.bairro,
                 "logradouro": cli.logradouro,
@@ -71,28 +72,32 @@ class Cliente(Resource):
             }
         return response
     def delete(self,idcliente):
-        pessoa = Pessoas.query.filter_by(idcliente=idcliente).first()
-        pessoa.delete()
-        msg = "O {} foi excluido com sucesso".format(pessoa.nome)
+        cli = Cliente.query.filter_by(idcliente=idcliente).first()
+        cli.delete()
+        msg = "O cliente {} foi excluido com sucesso".format(cli.nome)
         return {
             "status":"sucesso",
             "mensagem":msg
         }
-class ListarPessoas(Resource):
+class ListarClienteResource(Resource):
     def get(self):
-        pessoas = Pessoas.query.all()
-        response = [ {"id":i.id,"nome":i.nome,"idade":i.idade} for i in pessoas]
-        return response
+        cli = Cliente.query.all()
+        response = [ {"idcliente":i.idcliente,"nome":i.nome,"bairro":i.bairro,"logradouro":i.logradouro,"cidade":i.cidade,"numero":i.numero,"email":i.email,"criadoem":(i.criadoem- timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"),"alteradoem":(i.alteradoem - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")} for i in cli]
+        return response,200
     def post(self):
         dados = request.json
-        pessoa = Pessoas(nome=dados["nome"],idade=dados["idade"])
-        pessoa.save()
+        #cli = Cliente(nome=dados["nome"],bairro=dados["bairro"],
+        #logradouro=dados["logradouro"],cidade=dados["cidade"],numero=dados["numero"],email=dados["email"])
+        cli=Cliente(**dados)
+        cli.save()
         return {
-            "id":pessoa.id,
-            "nome": pessoa.nome,
-            "idade":pessoa.idade
-
-        }
+                "nome":cli.nome,
+                "bairro":cli.bairro,
+                "logradouro": cli.logradouro,
+                "cidade":cli.cidade,
+                "numero":cli.numero,
+                "email":cli.email           
+            }
 class ListarAtividades(Resource):
     def get(self):
         atividades = Atividades.query.all()
@@ -104,9 +109,9 @@ class ListarAtividades(Resource):
         atividade = Atividades(nome=dados["nome"],pessoa=pessoa)
         atividade.save()
 
-api.add_resource(Pessoa,"/pessoa/<string:nome>")
-api.add_resource(ListarPessoas,"/pessoa/")
-api.add_resource(ListarAtividades,"/atividade/")
+api.add_resource(ClienteResource,"/cliente/<int:idcliente>")
+api.add_resource(ListarClienteResource,"/cliente/")
+
 
 if __name__ == "__main__":
         app.run(debug=True)
