@@ -3,23 +3,30 @@ from urllib import response
 from flask import Flask, request
 from flask_restful import Resource,Api
 from models import Usuarios,Cliente,timedelta
-from werkzeug.security import generate_password_hash
-#from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash,check_password_hash
+
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+
 
 #auth = HTTPBasicAuth()
 app = Flask(__name__)
 api = Api(app)
 
-# USUARIOS = {
-#     "rafael":"123",
-#     "silvio":"321"
+# Setup the Flask-JWT-Extended extension
+app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+jwt = JWTManager(app)
 
-# }
+
 #@auth.verify_password
 def verificacao(login,senha):
     if not (login,senha):
         return False
     return Usuarios.query.filter_by(login=login,senha=senha).first()
+    
+
 
 class ClienteResource(Resource):
     # @auth.login_required
@@ -158,11 +165,26 @@ class ListarUsuarioResource(Resource):
                 "login":usuario.login,
                 "senha":usuario.senha
             }
+class LoginResource(Resource):
+    def post(self):
+        login = request.json.get("login", None)
+        senha = request.json.get("senha", None)
+        usuario = Usuarios.query.filter_by(login=login).first()
+        
+        if usuario:
+            if check_password_hash(usuario.senha,senha):
+                access_token = create_access_token(identity=login)
+                return {"access_token":access_token}           
+
+        return {"msg": "Bad username or password"}, 401
+
+        
         
 api.add_resource(ClienteResource,"/cliente/<int:idcliente>")
 api.add_resource(ListarClienteResource,"/cliente/")
 api.add_resource(UsuarioResource,"/usuario/<int:idusuario>")
 api.add_resource(ListarUsuarioResource,"/usuario/")
+api.add_resource(LoginResource,"/login/")
 
 
 if __name__ == "__main__":
