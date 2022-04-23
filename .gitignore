@@ -2,7 +2,7 @@ venv/
 *.db
 *.pyc
 __pycache__/
-
+*.bak
 instance/
 
 .pytest_cache/
