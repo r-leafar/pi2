@@ -145,14 +145,24 @@ class UsuarioResource(Resource):
         
 class ListarUsuarioResource(Resource):
     def get(self):
-        pass
-        '''
-        response = [ {"idcliente":i.idcliente,"nome":i.nome,"bairro":i.bairro,"logradouro":i.logradouro,"cidade":i.cidade,"numero":i.numero,"email":i.email,"criadoem":(i.criadoem- timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"),"alteradoem":(i.alteradoem - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")} for i in cli]
-        return response'''
+        usuarios = Usuarios.query.all()
+        response = [ {"idusuario":i.idusuario,"login":i.login,"criadoem":(i.criadoem- timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"),"alteradoem":(i.alteradoem - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")} for i in usuarios]
+        return response
+        
+    def post(self):
+        dados = request.json
+        usuario=Usuarios(**dados)
+        usuario.senha = generate_password_hash(dados["senha"])
+        usuario.save()
+        return {
+                "login":usuario.login,
+                "senha":usuario.senha
+            }
         
 api.add_resource(ClienteResource,"/cliente/<int:idcliente>")
 api.add_resource(ListarClienteResource,"/cliente/")
 api.add_resource(UsuarioResource,"/usuario/<int:idusuario>")
+api.add_resource(ListarUsuarioResource,"/usuario/")
 
 
 if __name__ == "__main__":
