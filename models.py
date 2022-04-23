@@ -30,8 +30,12 @@ class OrdemServico(Base):
         db_session.add(self)
         db_session.commit()
     def delete(self):
-        db_session.delete(self)
-        db_session.commit()
+        try:
+            db_session.delete(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise Exception("Não foi possivel excluir o objeto")
     
 
 class Cliente(Base):
@@ -53,8 +57,12 @@ class Cliente(Base):
         db_session.add(self)
         db_session.commit()
     def delete(self):
-        db_session.delete(self)
-        db_session.commit()
+        try:
+            db_session.delete(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise Exception("Não foi possivel excluir o objeto")
 
 
 class Assentamento(Base):
@@ -74,8 +82,13 @@ class Assentamento(Base):
         db_session.add(self)
         db_session.commit()
     def delete(self):
-        db_session.delete(self)
-        db_session.commit()
+        try:
+            db_session.delete(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise Exception("Não foi possivel excluir o objeto")
+        
 
 class Usuarios(Base):
     __tablename__="usuarios"
@@ -93,8 +106,12 @@ class Usuarios(Base):
         db_session.add(self)
         db_session.commit()
     def delete(self):
-        db_session.delete(self)
-        db_session.commit()
+        try:
+            db_session.delete(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise Exception("Não foi possivel excluir o objeto")
 
 def init_db():
     Base.metadata.create_all(bind=engine)
