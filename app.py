@@ -11,21 +11,12 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
 
-#auth = HTTPBasicAuth()
 app = Flask(__name__)
 api = Api(app)
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
 jwt = JWTManager(app)
-
-
-#@auth.verify_password
-def verificacao(login,senha):
-    if not (login,senha):
-        return False
-    return Usuarios.query.filter_by(login=login,senha=senha).first()
-    
 
 
 class ClienteResource(Resource):
@@ -92,10 +83,14 @@ class ClienteResource(Resource):
             "status":status,
             "mensagem":msg
         }
+
 class ListarClienteResource(Resource):
+    @jwt_required()
     def get(self):
         cli = Cliente.query.all()
         response = [ {"idcliente":i.idcliente,"nome":i.nome,"bairro":i.bairro,"logradouro":i.logradouro,"cidade":i.cidade,"numero":i.numero,"email":i.email,"criadoem":(i.criadoem- timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S"),"alteradoem":(i.alteradoem - timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")} for i in cli]
+        # Access the identity of the current user with get_jwt_identity
+        current_user = get_jwt_identity()
         return response
         
     def post(self):
