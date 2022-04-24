@@ -11,6 +11,7 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 
+
 class OrdemServico(Base):
     __tablename__="ordem_servico"
     idordemservico = Column(Integer,primary_key=True)
