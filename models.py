@@ -40,6 +40,7 @@ class OrdemServico(Base):
     idusuariocriacao = Column(Integer,ForeignKey("usuarios.idusuario"),nullable=False)
     criadoem = Column(DateTime,default = datetime.datetime.utcnow,nullable=False)
     alteradoem = Column(DateTime,onupdate = datetime.datetime.utcnow,default = datetime.datetime.utcnow,nullable=False)
+    status = relationship("StatusOcorrencia",cascade="all,delete",backref="ordemservico_status")
     usuario = relationship("Usuarios",cascade="all,delete",backref="ordemservico_usuario")
     cliente = relationship("Cliente",cascade="all,delete",backref="ordemservico_cliente")
     
