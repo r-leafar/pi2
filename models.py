@@ -10,12 +10,31 @@ db_session = scoped_session(sessionmaker(autocommit=False,bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-
+class StatusOcorrencia(Base):
+    __tablename__="status_ocorrencia"
+    idstatus = Column(Integer,primary_key=True)
+    nome = Column(String(40),nullable=False)
+    criadoem = Column(DateTime,default = datetime.datetime.utcnow,nullable=False)
+    alteradoem = Column(DateTime,onupdate = datetime.datetime.utcnow,default = datetime.datetime.utcnow,nullable=False)
+    
+    def __repr__(self):
+        return "<Status {}>".format(self.nome)
+    def save(self):
+        db_session.add(self)
+        db_session.commit()
+    def delete(self):
+        try:
+            db_session.delete(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise Exception("Não foi possivel excluir o objeto")
 
 class OrdemServico(Base):
     __tablename__="ordem_servico"
     idordemservico = Column(Integer,primary_key=True)
     idcliente = Column(Integer,ForeignKey("cliente.idcliente"),nullable=False)
+    idstatus = Column(Integer,ForeignKey("status_ocorrencia.idstatus"),nullable=False)
     titulo = Column(String(40),nullable=False)
     descricao = Column(String(250),nullable=False)
     idusuariocriacao = Column(Integer,ForeignKey("usuarios.idusuario"),nullable=False)
