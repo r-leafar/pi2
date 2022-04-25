@@ -8,6 +8,8 @@ from pi2.resources.listarclienteresource import ListarClienteResource
 from pi2.resources.usuarioresource import UsuarioResource
 from pi2.resources.listarusuarioresource import ListarUsuarioResource
 from pi2.resources.loginresource import LoginResource
+from pi2.resources.listarstatusocorrenciaresource import ListarStatusOcorrenciaResource
+from pi2.resources.statusocorrenciaresource import StatusOcorrenciaResource
 
 app = Flask(__name__)
 api = Api(app)
@@ -21,6 +23,8 @@ api.add_resource(ListarClienteResource,"/cliente/")
 api.add_resource(UsuarioResource,"/usuario/<int:idusuario>")
 api.add_resource(ListarUsuarioResource,"/usuario/")
 api.add_resource(LoginResource,"/login/")
+api.add_resource(ListarStatusOcorrenciaResource,"/statusocorencia/")
+api.add_resource(StatusOcorrenciaResource,"/statusocorencia/<int:idstatus>")
 
 
 if __name__ == "__main__":
