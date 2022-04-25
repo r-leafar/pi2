@@ -1,16 +1,9 @@
-from models import Cliente, Usuarios, OrdemServico
+from models import Cliente, Usuarios, OrdemServico,StatusOcorrencia
 
-def insere():
-    #pessoa = Pessoas(nome="Thiago",idade=30)
-    #pessoa.save()
-    #programador = Programador(nome="RAFAEL")
-    #programador.save()
-    #habilidade = Habilidade(nome="Back End")
-    #habilidade.save()
+def insere_status():
+    status = StatusOcorrencia(nome="ENCAMINHADO P/ USUARIO")
+    status.save()
 
-    prog_hab = Programador_Habilidade(idprogramador=1,idhabilidade=1);
-    prog_hab.save()
-    
 def consulta():
     prog_hab = Programador_Habilidade.query.all()
     for p in prog_hab:
@@ -28,8 +21,8 @@ def insere_cliente(nome):
     cli = Cliente(nome=nome)
     cli.save()
     
-def insere_ordem(idcliente,titulo,descricao,idusuariocriacao):
-    ordem = OrdemServico(idcliente=idcliente,titulo=titulo,descricao=descricao,idusuariocriacao=idusuariocriacao)
+def insere_ordem(idcliente,titulo,descricao,idusuariocriacao,idstatus):
+    ordem = OrdemServico(idcliente=idcliente,titulo=titulo,descricao=descricao,idusuariocriacao=idusuariocriacao,idstatus=idstatus)
     ordem.save()
 
 def consulta_todos_usuarios():
@@ -39,6 +32,7 @@ def consulta_todos_usuarios():
 if __name__ == "__main__":
     insere_cliente("RAFAEL SABOIA SILVA")
     insere_usuario("rafaelsaboia","pbkdf2:sha256:260000$dKGUN77BhkjwSoiz$e21a94efb49544cc4177c2581d3e4ff9f5809ef19177ad94b62d25cdf9f8e526")
-    insere_ordem(1,"teste","teste",1)
+    insere_status()
+    insere_ordem(1,"teste","teste",1,1)
     #exclui_cliente(1)
     #consulta()
